@@ -40,7 +40,7 @@ python -m apsbot hubs
 python -m apsbot projects
 ```
 
-[](docs/projects.png)
+![](docs/projects.png)
 
 - Get top folder 
 

@@ -55,7 +55,7 @@ def auth2leg():
 
     
 @apsbot.command()
-@click.option('--callback', prompt='Callback URL', default='http://localhost:5000/api/auth/callback', help='The callback URL.')
+@click.option('--callback', prompt='Callback URL', default='http://localhost:8000/api/auth/callback', help='The callback URL.')
 @click.option('--scope', prompt='Scope', default='data:read data:write', help='The scope.')
 def auth3leg(callback, scope):
     """This command authenticates with 3-legged OAuth and copies the token to the clipboard."""
@@ -88,7 +88,8 @@ def hubs():
 
 @apsbot.command()
 @click.option('--hub_id', prompt='Hub Id', help='The projects information from hub id.')
-def get_projects(hub_id):
+@click.option('--save_data', prompt='Save Data(y/n)', help='Save data to file.')
+def projects(hub_id, save_data):
     """This command gets the details of a projects inside hub."""
     if not hub_id:
         click.echo("Please provide a Hub Id.")
@@ -96,34 +97,60 @@ def get_projects(hub_id):
     token = TokenConfig.load_config()
     bim360 = BIM360(token)
     df = bim360.batch_report_projects(hub_id)
+    if df.empty:
+        click.echo("No projects found.")
+        return
+    if str.lower(save_data) == 'y':
+        cwd = os.getcwd()
+        file_path = os.path.join(cwd, 'projects.csv')
+        df.to_csv(file_path, index=False)
+        click.echo(f"Projects data saved to {file_path}")
     print(tabulate(df, headers="keys", tablefmt="psql"))
     
 @apsbot.command()
 @click.option('--hub_id', prompt='Hub Id', help='The projects information from hub id.')
 @click.option('--project_id', prompt='Project Id', help='The projects information from project id.')
-def get_top_folder(hub_id, project_id):
+@click.option('--save_data', prompt='Save Data(y/n)', help='Save data to file.')
+def top_folders(hub_id, project_id, save_data):
     """This command gets the top folder of a project."""
     if not hub_id or not project_id:
         click.echo("Please provide a Hub Id and Project Id.")
         return
-    bim360 = BIM360()
+    token = TokenConfig.load_config()
+    bim360 = BIM360(token)
     df = bim360.batch_report_top_folders(hub_id, project_id)
     if df.empty:
         click.echo("No top folder found.")
         return
+    if str.lower(save_data) == 'y':
+        cwd = os.getcwd()
+        file_path = os.path.join(cwd, 'top_folders.csv')
+        df.to_csv(file_path, index=False)
+        click.echo(f"Top folders data saved to {file_path}")
     print(tabulate(df, headers="keys", tablefmt="psql"))
 
 @apsbot.command()
-@click.option('--hub_id', prompt='Hub Id', help='The projects information from hub id.')
 @click.option('--project_id', prompt='Project Id', help='The projects information from project id.')
-def get_items(project_id, folder_id,extension,is_sub_folder):
+@click.option('--folder_id', prompt='Folder Id', help='The projects information from folder id.')
+@click.option('--extension', prompt='Extension',default=".rvt", help='The projects information from extension.')
+@click.option('--is_sub_folder', prompt='Is Sub Folder', help='The projects information from is sub folder.')
+@click.option('--save_data', prompt='Save Data(y/n)', help='Save data to file.')
+def items(project_id, folder_id,extension,is_sub_folder,save_data):
     """This command gets the top folder of a project."""
-    if not hub_id or not project_id:
+    if not project_id or not folder_id:
         click.echo("Please provide a Hub Id and Project Id.")
         return
-    bim360 = BIM360()
+    token = TokenConfig.load_config()
+    bim360 = BIM360(token)
     df = bim360.batch_report_items(project_id, folder_id,extension,is_sub_folder)
     if df.empty:
         click.echo("No top folder found.")
         return
+    if str.lower(save_data) == 'y':
+        cwd = os.getcwd()
+        file_path = os.path.join(cwd, 'items.csv')
+        df.to_csv(file_path, index=False)
+        click.echo(f"Items data saved to {file_path}")
     print(tabulate(df, headers="keys", tablefmt="psql"))
+
+## TODO : item versions
