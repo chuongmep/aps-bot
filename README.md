@@ -42,6 +42,13 @@ python -m apsbot projects
 
 ![](docs/projects.png)
 
+- Get top folder 
+
+```bash
+python -m apsbot get-top-folder --hub_id <hubid> --project_id <projectid>
+```
+
+![](docs/top-folder.png)
 
 ## Developer Colaboration
 
