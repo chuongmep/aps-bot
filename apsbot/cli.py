@@ -1,9 +1,12 @@
 import click
 from aps_toolkit import Auth,BIM360, AuthGoogleColab
+from aps_toolkit import Token
 import pyperclip
 from tabulate import tabulate
 import subprocess
 import os
+from .config import TokenConfig
+import json
 @click.group()
 def apsbot():
     """Welcome to CLI apsbot! This CLI tool is used to interact with the Autodesk Forge API."""
@@ -40,15 +43,14 @@ def show_ports():
 def auth2leg():
     """This command authenticates with 2-legged OAuth and copies the token to the clipboard."""
     auth = Auth()
-    result = auth.auth2leg()
+    token = auth.auth2leg()
     click.echo("Auth 2 legged success!")
-    token = result.access_token
-    os.environ['APS_ACCESS_TOKEN'] = token
+    TokenConfig.save_config(token)
     print("Token Saved to Environment Variables")
-    print("Access Token: ", token)
-    print("Expires in: ", result.expires_in)
+    print("Access Token: ", token.access_token)
+    print("Expires in: ", token.expires_in)
     # copy to clipboard
-    pyperclip.copy(token)
+    pyperclip.copy(token.access_token)
     print("Note: Token copied to clipboard.")
 
     
@@ -59,10 +61,11 @@ def auth3leg(callback, scope):
     """This command authenticates with 3-legged OAuth and copies the token to the clipboard."""
     auth = AuthGoogleColab()
     result = auth.auth3leg(callback, scope)
-    click.echo("Auth 3 legged success!")
-    os.environ['APS_ACCESS_TOKEN'] = result.access_token
-    os.environ['APS_REFRESH_TOKEN'] = result.refresh_token
-    print("Token Saved to Environment Variables")
+    if not result:
+        click.echo("Auth 3 legged failed.")
+        return
+    TokenConfig.save_config(result)
+    click.echo("Auth 3 legged success! Saving token to token_config.json.")
     print("Access Token: ", result.access_token)
     print("Refresh Token: ", result.refresh_token)
     print("Expires in: ", result.expires_in)
@@ -73,12 +76,15 @@ def auth3leg(callback, scope):
 @apsbot.command()
 def hubs():
     """This command lists all hubs."""
-    bim360 = BIM360()
-    json = bim360.get_hubs()
-    if not json:
+    token = TokenConfig.load_config()
+    bim360 = BIM360(token)
+    result = bim360.get_hubs()
+    if not result:
         click.echo("No hubs found.")
         return
-    print(json)
+    print(json.dumps(result, indent=4))
+
+
 
 @apsbot.command()
 @click.option('--hub_id', prompt='Hub Id', help='The projects information from hub id.')
@@ -87,7 +93,8 @@ def get_projects(hub_id):
     if not hub_id:
         click.echo("Please provide a Hub Id.")
         return
-    bim360 = BIM360()
+    token = TokenConfig.load_config()
+    bim360 = BIM360(token)
     df = bim360.batch_report_projects(hub_id)
     print(tabulate(df, headers="keys", tablefmt="psql"))
     
@@ -101,6 +108,21 @@ def get_top_folder(hub_id, project_id):
         return
     bim360 = BIM360()
     df = bim360.batch_report_top_folders(hub_id, project_id)
+    if df.empty:
+        click.echo("No top folder found.")
+        return
+    print(tabulate(df, headers="keys", tablefmt="psql"))
+
+@apsbot.command()
+@click.option('--hub_id', prompt='Hub Id', help='The projects information from hub id.')
+@click.option('--project_id', prompt='Project Id', help='The projects information from project id.')
+def get_items(project_id, folder_id,extension,is_sub_folder):
+    """This command gets the top folder of a project."""
+    if not hub_id or not project_id:
+        click.echo("Please provide a Hub Id and Project Id.")
+        return
+    bim360 = BIM360()
+    df = bim360.batch_report_items(project_id, folder_id,extension,is_sub_folder)
     if df.empty:
         click.echo("No top folder found.")
         return
