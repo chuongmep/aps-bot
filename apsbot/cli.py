@@ -9,11 +9,6 @@ def apsbot():
     pass
 
 @apsbot.command()
-def helloworld():
-    """This command prints 'Hello, World!'"""
-    click.echo("Hello, World!")
-
-@apsbot.command()
 def auth2leg():
     """This command authenticates with 2-legged OAuth and copies the token to the clipboard."""
     auth = Auth()
