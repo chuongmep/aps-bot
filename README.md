@@ -7,7 +7,7 @@ Install package
 From Github :
 
 ```bash
-pip install git+https://github.com/chuongmep/aps-command.git
+pip install git+https://github.com/chuongmep/aps-bot.git
 ```
 
 Setup environment variables
