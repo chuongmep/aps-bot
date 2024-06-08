@@ -83,7 +83,7 @@ setup(
     description="A simple CLI tool to interact with the Autodesk Forge API.",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/callbot",
+    url="https://github.com/chuongmep/aps-bot.git",
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
