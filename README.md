@@ -105,6 +105,10 @@ python -m apsbot get-top-folder --hub_id <hubid> --project_id <projectid>
 
 ![](docs/item-version.png)
 
+### Categories
+
+![](docs/categories.png)
+
 ## Developer Collaboration
 
 
