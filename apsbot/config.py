@@ -63,6 +63,26 @@ class Config:
     def load_revit_category(cls):
         """Load the default Revit category from a JSON file."""
         return cls._load_from_config('DEFAULT_REVIT_CATEGORY')
+    
+    @classmethod
+    def save_revit_categories(cls, revit_categories):
+        """Save the list of Revit categories to a JSON file."""
+        cls._save_to_config('REVIT_CATEGORIES', revit_categories)
+    
+    @classmethod
+    def load_revit_categories(cls):
+        """Load the list of Revit categories from a JSON file."""
+        return cls._load_from_config('REVIT_CATEGORIES')
+    
+    @classmethod
+    def save_revit_parameters(cls, revit_parameters):
+        """Save the list of Revit parameters to a JSON file."""
+        cls._save_to_config('REVIT_PARAMETERS', revit_parameters)
+    
+    @classmethod
+    def load_revit_parameters(cls):
+        """Load the list of Revit parameters from a JSON file."""
+        return cls._load_from_config('REVIT_PARAMETERS')
 
     @classmethod
     def _save_to_config(cls, key, value):
