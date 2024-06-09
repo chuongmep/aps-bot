@@ -53,6 +53,16 @@ class Config:
     def load_derivative_urn(cls):
         """Load the default derivative URN from a JSON file."""
         return cls._load_from_config('DEFAULT_DERIVATIVE_URN')
+    
+    @classmethod
+    def save_revit_category(cls, revit_category):
+        """Save the default Revit category to a JSON file."""
+        cls._save_to_config('DEFAULT_REVIT_CATEGORY', revit_category)
+    
+    @classmethod
+    def load_revit_category(cls):
+        """Load the default Revit category from a JSON file."""
+        return cls._load_from_config('DEFAULT_REVIT_CATEGORY')
 
     @classmethod
     def _save_to_config(cls, key, value):

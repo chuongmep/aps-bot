@@ -1,6 +1,7 @@
 import click
 from aps_toolkit import Auth,BIM360, AuthGoogleColab
 from aps_toolkit import Token
+from aps_toolkit import PropDbReaderRevit
 import pyperclip
 from tabulate import tabulate
 import subprocess
@@ -193,3 +194,31 @@ def item_versions(project_id, item_id, save_data):
         df.to_csv(file_path, index=False)
         click.echo(f"Item Versions data saved to {file_path}")
     print(tabulate(df, headers="keys", tablefmt="psql") )
+
+
+@apsbot.command()
+@click.option('--category', prompt='Category',default=lambda: Config.load_revit_category(), help='The category of the element.')
+@click.option('--urn', prompt='URN',default=lambda: Config.load_derivative_urn(), help='The derivative urn of the item version.')
+@click.option('--region', prompt='Region',default="US", help='The region of the item.')
+@click.option('--display_unit', prompt='Display Unit(y/n)',default="n", help='The display unit of the item.')
+@click.option('--save_data', prompt='Save Data(y/n)',default="n", help='Save data to file.')
+def data_revit_category(category, urn,region,display_unit,save_data):
+    """Read Revit data by category and urn."""
+    token = TokenConfig.load_config()
+    propdb = PropDbReaderRevit(urn,token,region)
+    if not category or not urn:
+        click.echo("Please provide a category and urn.")
+        return
+    Config.save_derivative_urn(urn)
+    category = category.title()
+    Config.save_revit_category(category)
+    df = propdb.get_data_by_category(category, urn,display_unit=display_unit)
+    if df.empty:
+        click.echo("No data found.")
+        return
+    if str.lower(save_data) == 'y':
+        cwd = os.getcwd()
+        file_path = os.path.join(cwd, f'{category}.csv')
+        df.to_csv(file_path, index=False)
+        click.echo(f"Revit data saved to {file_path}")
+    print(tabulate(df, headers="keys", tablefmt="psql"))
