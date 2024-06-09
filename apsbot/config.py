@@ -83,6 +83,15 @@ class Config:
     def load_revit_parameters(cls):
         """Load the list of Revit parameters from a JSON file."""
         return cls._load_from_config('REVIT_PARAMETERS')
+    
+    @classmethod
+    def save_region(cls, region):
+        """Save the default region to a JSON file."""
+        cls._save_to_config('DEFAULT_REGION', region)
+    @classmethod
+    def load_region(cls):
+        """Load the default region from a JSON file."""
+        return cls._load_from_config('DEFAULT_REGION')
 
     @classmethod
     def _save_to_config(cls, key, value):

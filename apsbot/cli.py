@@ -241,34 +241,6 @@ def item_versions(project_id, item_id, save_data):
         click.echo(f"Item Versions data saved to {file_path}")
     print(tabulate(df, headers="keys", tablefmt="psql") )
 
-
-@apsbot.command()
-@click.option('--category', prompt='Category',default=lambda: Config.load_revit_category(), help='The category of the element.')
-@click.option('--urn', prompt='URN',default=lambda: Config.load_derivative_urn(), help='The derivative urn of the item version.')
-@click.option('--region', prompt='Region',default="US", help='The region of the item.')
-@click.option('--display_unit', prompt='Display Unit(y/n)',default="n", help='The display unit of the item.')
-@click.option('--save_data', prompt='Save Data(y/n)',default="n", help='Save data to file.')
-def data_revit_category(category, urn,region,display_unit,save_data):
-    """Read Revit data by category and urn."""
-    token = TokenConfig.load_config()
-    propdb = PropDbReaderRevit(urn,token,region)
-    if not category or not urn:
-        click.echo("Please provide a category and urn.")
-        return
-    Config.save_derivative_urn(urn)
-    category = category.title()
-    Config.save_revit_category(category)
-    df = propdb.get_data_by_category(category, urn,display_unit=display_unit)
-    if df.empty:
-        click.echo("No data found.")
-        return
-    if str.lower(save_data) == 'y':
-        cwd = os.getcwd()
-        file_path = os.path.join(cwd, f'{category}.csv')
-        df.to_csv(file_path, index=False)
-        click.echo(f"Revit data saved to {file_path}")
-    print(tabulate(df, headers="keys", tablefmt="psql"))
-
 @apsbot.command()
 @click.option('--urn', prompt='URN',default=lambda: Config.load_derivative_urn(), help='The derivative urn of the item version.')
 @click.option('--region', prompt='Region',default="US", help='The region of the item.')
@@ -294,6 +266,31 @@ def data_revit_parameters(urn,region,save_data):
         click.echo(f"Revit data saved to {file_path}")
     print(tabulate(df, headers="keys", tablefmt="psql"))
 
+## all categories 
+@apsbot.command()
+@click.option('--urn', prompt='URN',default=lambda: Config.load_derivative_urn(), help='The derivative urn of the item version.')
+@click.option('--region', prompt='Region',default="US", help='The region of the item.')
+@click.option('--save_data', prompt='Save Data(y/n)',default="n", help='Save data to file.')
+def data_revit_categories(urn,region,save_data):
+    """Read all categories by urn."""
+    token = TokenConfig.load_config()
+    propdb = PropDbReaderRevit(urn,token,region)
+    if not urn:
+        click.echo("Please provide a urn.")
+        return
+    Config.save_derivative_urn(urn)
+    dict_categories = propdb.get_all_categories()
+    df = pd.DataFrame.from_dict(dict_categories, orient='index', columns=['Category'])
+    if df.empty:
+        click.echo("No data found.")
+        return
+    if str.lower(save_data) == 'y':
+        cwd = os.getcwd()
+        file_path = os.path.join(cwd, 'categories.csv')
+        df.to_csv(file_path, index=False)
+        click.echo(f"Revit data saved to {file_path}")
+    print(tabulate(df, headers="keys", tablefmt="psql"))
+
 ## by categories
 @apsbot.command()
 @click.option('--urn', prompt='URN',default=lambda: Config.load_derivative_urn(), help='The derivative urn of the item version.')
@@ -302,7 +299,7 @@ def data_revit_parameters(urn,region,save_data):
 @click.option('--is_sub_family', prompt='Is Sub Family(y/n)',default="n", help='The is sub family of the elements.')
 @click.option('--display_unit', prompt='Display Unit(y/n)',default="n", help='The display unit of the item.')
 @click.option('--save_data', prompt='Save Data(y/n)',default="y", help='Save data to file.')
-def data_revit_categories(urn,region,categories,is_sub_family,display_unit,save_data):
+def data_revit_by_categories(urn,region,categories,is_sub_family,display_unit,save_data):
     """Read Revit data by categories."""
     token = TokenConfig.load_config()
     propdb = PropDbReaderRevit(urn,token,region)
@@ -345,7 +342,7 @@ def data_revit_categories(urn,region,categories,is_sub_family,display_unit,save_
 @click.option('--is_sub_family', prompt='Is Sub Family(y/n)',default="n", help='The is sub family of the elements.')
 @click.option('--display_unit', prompt='Display Unit(y/n)',default="n", help='The display unit of the item.')
 @click.option('--save_data', prompt='Save Data(y/n)',default="n", help='Save data to file.')
-def data_revit_categories_parameters(urn,region,categories,parameters,is_sub_family,display_unit,save_data):
+def data_revit_by_cats_params(urn,region,categories,parameters,is_sub_family,display_unit,save_data):
     """Read Revit data by categories and parameters."""
     token = TokenConfig.load_config()
     propdb = PropDbReaderRevit(urn,token,region)
