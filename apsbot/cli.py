@@ -5,7 +5,8 @@ import pyperclip
 from tabulate import tabulate
 import subprocess
 import os
-from .config import TokenConfig
+from .tokenconfig import TokenConfig
+from .config import Config
 import pandas as pd
 import json
 @click.group()
@@ -88,13 +89,15 @@ def hubs():
 
 
 @apsbot.command()
-@click.option('--hub_id', prompt='Hub Id', help='The projects information from hub id.')
+@click.option('--hub_id', prompt='Hub Id',default=lambda: Config.load_hub_id(), help='The projects information from hub id.')
 @click.option('--save_data', prompt='Save Data(y/n)', help='Save data to file.')
 def projects(hub_id, save_data):
     """Get batch all projects with general information by hub_id"""
     if not hub_id:
         click.echo("Please provide a Hub Id.")
         return
+    # save hub_id to config
+    Config.save_hub_id(hub_id)
     token = TokenConfig.load_config()
     bim360 = BIM360(token)
     df = bim360.batch_report_projects(hub_id)
@@ -109,14 +112,16 @@ def projects(hub_id, save_data):
     print(tabulate(df, headers="keys", tablefmt="psql"))
     
 @apsbot.command()
-@click.option('--hub_id', prompt='Hub Id', help='The projects information from hub id.')
-@click.option('--project_id', prompt='Project Id', help='The projects information from project id.')
+@click.option('--hub_id', prompt='Hub Id',default=lambda: Config.load_hub_id(), help='The projects information from hub id.')
+@click.option('--project_id', prompt='Project Id',default=lambda: Config.load_project_id(), help='The projects information from project id.')
 @click.option('--save_data', prompt='Save Data(y/n)', help='Save data to file.')
 def top_folders(hub_id, project_id, save_data):
     """Get batch all top folders with general information by hub_id and project_id"""
     if not hub_id or not project_id:
         click.echo("Please provide a Hub Id and Project Id.")
         return
+    Config.save_hub_id(hub_id)
+    Config.save_project_id(project_id)
     token = TokenConfig.load_config()
     bim360 = BIM360(token)
     df = bim360.batch_report_top_folders(hub_id, project_id)
@@ -133,8 +138,8 @@ def top_folders(hub_id, project_id, save_data):
     print(tabulate(df, headers="keys", tablefmt="psql",))
 
 @apsbot.command()
-@click.option('--project_id', prompt='Project Id', help='The projects information from project id.')
-@click.option('--folder_id', prompt='Folder Id', help='The projects information from folder id.')
+@click.option('--project_id', prompt='Project Id',default=lambda: Config.load_project_id(), help='The projects information from project id.')
+@click.option('--folder_id', prompt='Folder Id',default=lambda: Config.load_folder_id(), help='The projects information from folder id.')
 @click.option('--extension', prompt='Extension',default=".rvt", help='The projects information from extension.')
 @click.option('--is_sub_folder', prompt='Is Sub Folder(y/n)',default="n", help='The projects information from is sub folder.')
 @click.option('--save_data', prompt='Save Data(y/n)',default="n", help='Save data to file.')
@@ -143,6 +148,8 @@ def items(project_id, folder_id,extension,is_sub_folder,save_data):
     if not project_id or not folder_id:
         click.echo("Please provide a Hub Id and Project Id.")
         return
+    Config.save_folder_id(folder_id)
+    Config.save_project_id(project_id)
     token = TokenConfig.load_config()
     bim360 = BIM360(token)
     if str.lower(is_sub_folder) == 'y':
@@ -162,16 +169,18 @@ def items(project_id, folder_id,extension,is_sub_folder,save_data):
     df = df[['item_id', 'item_name', 'derivative_urn']]
     print(tabulate(df, headers="keys", tablefmt="psql"))
 
-## TODO : item versions
 @apsbot.command()
-@click.option('--project_id', prompt='Project Id', help='The projects information from project id.')
-@click.option('--item_id', prompt='Item Id', help='The urn of the item.')
+@click.option('--project_id', prompt='Project Id',default=lambda: Config.load_project_id(),help='The projects information from project id.')
+@click.option('--item_id', prompt='Item Id',default=lambda: Config.load_item_id(), help='The urn of the item.')
 @click.option('--save_data', prompt='Save Data(y/n)', help='Save data to file.')
 def item_versions(project_id, item_id, save_data):
     """Get batch all item versions with general information by project_id and item_id"""
+    
     if not project_id or not item_id:
         click.echo("Please provide a Hub Id and Project Id.")
         return
+    Config.save_item_id(item_id)
+    Config.save_project_id(project_id)
     token = TokenConfig.load_config()
     bim360 = BIM360(token)
     df = bim360.batch_report_item_versions(project_id, item_id)
