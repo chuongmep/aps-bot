@@ -6,10 +6,11 @@ from tabulate import tabulate
 import subprocess
 import os
 from .config import TokenConfig
+import pandas as pd
 import json
 @click.group()
 def apsbot():
-    """Welcome to CLI apsbot! This CLI tool is used to interact with the Autodesk Forge API."""
+    """Welcome to CLI apsbot! This CLI tool is used to interact with the Autodesk Platform Services(Former Autodesk Forge) API."""
     pass
 
 
@@ -90,7 +91,7 @@ def hubs():
 @click.option('--hub_id', prompt='Hub Id', help='The projects information from hub id.')
 @click.option('--save_data', prompt='Save Data(y/n)', help='Save data to file.')
 def projects(hub_id, save_data):
-    """This command gets the details of a projects inside hub."""
+    """Get batch all projects with general information by hub_id"""
     if not hub_id:
         click.echo("Please provide a Hub Id.")
         return
@@ -112,7 +113,7 @@ def projects(hub_id, save_data):
 @click.option('--project_id', prompt='Project Id', help='The projects information from project id.')
 @click.option('--save_data', prompt='Save Data(y/n)', help='Save data to file.')
 def top_folders(hub_id, project_id, save_data):
-    """This command gets the top folder of a project."""
+    """Get batch all top folders with general information by hub_id and project_id"""
     if not hub_id or not project_id:
         click.echo("Please provide a Hub Id and Project Id.")
         return
@@ -127,30 +128,59 @@ def top_folders(hub_id, project_id, save_data):
         file_path = os.path.join(cwd, 'top_folders.csv')
         df.to_csv(file_path, index=False)
         click.echo(f"Top folders data saved to {file_path}")
-    print(tabulate(df, headers="keys", tablefmt="psql"))
+    # just show df id,name
+    df = df[['id', 'name']]
+    print(tabulate(df, headers="keys", tablefmt="psql",))
 
 @apsbot.command()
 @click.option('--project_id', prompt='Project Id', help='The projects information from project id.')
 @click.option('--folder_id', prompt='Folder Id', help='The projects information from folder id.')
 @click.option('--extension', prompt='Extension',default=".rvt", help='The projects information from extension.')
-@click.option('--is_sub_folder', prompt='Is Sub Folder', help='The projects information from is sub folder.')
-@click.option('--save_data', prompt='Save Data(y/n)', help='Save data to file.')
+@click.option('--is_sub_folder', prompt='Is Sub Folder(y/n)',default="n", help='The projects information from is sub folder.')
+@click.option('--save_data', prompt='Save Data(y/n)',default="n", help='Save data to file.')
 def items(project_id, folder_id,extension,is_sub_folder,save_data):
-    """This command gets the top folder of a project."""
+    """Get batch all items with general information by project_id and folder_id"""
     if not project_id or not folder_id:
         click.echo("Please provide a Hub Id and Project Id.")
         return
     token = TokenConfig.load_config()
     bim360 = BIM360(token)
+    if str.lower(is_sub_folder) == 'y':
+        is_sub_folder = True
+    else:
+        is_sub_folder = False
     df = bim360.batch_report_items(project_id, folder_id,extension,is_sub_folder)
     if df.empty:
-        click.echo("No top folder found.")
+        click.echo("No items found.")
         return
     if str.lower(save_data) == 'y':
         cwd = os.getcwd()
         file_path = os.path.join(cwd, 'items.csv')
         df.to_csv(file_path, index=False)
         click.echo(f"Items data saved to {file_path}")
+    # just show item_id, item_name, derivative_urn
+    df = df[['item_id', 'item_name', 'derivative_urn']]
     print(tabulate(df, headers="keys", tablefmt="psql"))
 
 ## TODO : item versions
+@apsbot.command()
+@click.option('--project_id', prompt='Project Id', help='The projects information from project id.')
+@click.option('--item_id', prompt='Item Id', help='The urn of the item.')
+@click.option('--save_data', prompt='Save Data(y/n)', help='Save data to file.')
+def item_versions(project_id, item_id, save_data):
+    """Get batch all item versions with general information by project_id and item_id"""
+    if not project_id or not item_id:
+        click.echo("Please provide a Hub Id and Project Id.")
+        return
+    token = TokenConfig.load_config()
+    bim360 = BIM360(token)
+    df = bim360.batch_report_item_versions(project_id, item_id)
+    if df.empty:
+        click.echo("No top folder found.")
+        return
+    if str.lower(save_data) == 'y':
+        cwd = os.getcwd()
+        file_path = os.path.join(cwd, 'item_versions.csv')
+        df.to_csv(file_path, index=False)
+        click.echo(f"Item Versions data saved to {file_path}")
+    print(tabulate(df, headers="keys", tablefmt="psql") )
