@@ -10,7 +10,8 @@ setup(
         "click",
         "aps-toolkit",
         "pyperclip",
-        "tabulate"
+        "tabulate",
+        "openai"
     ],
     entry_points={
         "console_scripts": [

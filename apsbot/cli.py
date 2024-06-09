@@ -14,7 +14,7 @@ import pandas as pd
 import json
 import requests
 import base64
-
+from openai import OpenAI
 
 @click.group()
 def apsbot():
@@ -151,16 +151,16 @@ def auth3leg(callback, scope):
     print("Note: Token copied to clipboard.")
 
 
-@apsbot.command()
-def hubs():
-    """This command lists all hubs."""
-    token = TokenConfig.load_config()
-    bim360 = BIM360(token)
-    result = bim360.get_hubs()
-    if not result:
-        click.echo("No hubs found.")
-        return
-    print(json.dumps(result, indent=4))
+    @apsbot.command()
+    def hubs():
+        """This command lists all hubs."""
+        token = TokenConfig.load_config()
+        bim360 = BIM360(token)
+        result = bim360.get_hubs()
+        if not result:
+            click.echo("No hubs found.")
+            return
+        print(json.dumps(result, indent=4))
 
 
 @apsbot.command()
@@ -536,4 +536,76 @@ def bucket_delete_object(bucket_name, region, object_name):
         click.echo("Object deletion failed.")
         return
     click.echo("Object deleted successfully!")
+
+@apsbot.command()
+def chat():
+    """This command starts a chat session with the bot."""
+    click.echo("Starting chat with the bot. Type 'exit' to end the chat.")
+    client = OpenAI()
+    while True:
+        user_input = input("You: ")
+        if user_input.lower() == 'exit':
+            click.echo("Ending chat session.")
+            break
+        chat_complete = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": user_input}
+            ]
+        )
+        bot_response = chat_complete.choices[0].message.content
+        click.echo(f"Bot: {bot_response}")
+
+@apsbot.command()
+@click.option('--folder_path', prompt='Folder Path', default=lambda: Config.load_folder_path(), help='The folder path.')
+def chat_data(folder_path):
+    """This command starts a chat with knowledge based on data in the specified folder."""
+    click.echo("Starting chat with the bot. Type 'exit' to end the chat.")
+    # Read and process CSV files in the specified folder
+    knowledge_base = read_and_process_csv(folder_path)
+    while True:
+        user_input = input("You: ")
+        if user_input.lower() == 'exit':
+            click.echo("Ending chat session.")
+            break
+        bot_response = interact_with_chatgpt(knowledge_base, user_input)
+        click.echo(f"Bot: {bot_response}")
+
+def read_and_process_csv(folder_path):
+    # List all CSV files in the specified folder
+    csv_files = [file for file in os.listdir(folder_path) if file.endswith('.csv')]
+    print("CSV files: ", csv_files)
+
+    # Store knowledge context in a dictionary
+    knowledge_base = {}
+
+    # Process each CSV file
+    for file in csv_files:
+        file_path = os.path.join(folder_path, file)
+        data = pd.read_csv(file_path)
+        
+        # Extract some summary statistics or specific information
+        summary = data.describe(include='all').to_string()
+        
+        # Add this information to the knowledge base with file name as key
+        knowledge_base[file] = summary
+    
+    return knowledge_base
+def interact_with_chatgpt(knowledge_base, query):
+    # Format the input for the chat model
+    knowledge_summary = '\n'.join([f"{key}: {value}" for key, value in knowledge_base.items()])
+    messages = [
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": f"Here is some knowledge:\n\n{knowledge_summary}\n\nBased on this information, {query}"}
+    ]
+    client = OpenAI()
+    GPT_MODEL = "gpt-3.5-turbo"
+    response = client.chat.completions.create(
+        model=GPT_MODEL,
+        messages=messages,
+        temperature=0
+    )
+    
+    return response.choices[0].message.content
 
