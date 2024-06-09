@@ -294,6 +294,48 @@ def data_revit_parameters(urn,region,save_data):
         click.echo(f"Revit data saved to {file_path}")
     print(tabulate(df, headers="keys", tablefmt="psql"))
 
+## by categories
+@apsbot.command()
+@click.option('--urn', prompt='URN',default=lambda: Config.load_derivative_urn(), help='The derivative urn of the item version.')
+@click.option('--region', prompt='Region',default="US", help='The region of the item.')
+@click.option('--categories', prompt='Categories',default=lambda: Config.load_revit_categories(), help='The categories of the elements.')
+@click.option('--is_sub_family', prompt='Is Sub Family(y/n)',default="n", help='The is sub family of the elements.')
+@click.option('--display_unit', prompt='Display Unit(y/n)',default="n", help='The display unit of the item.')
+@click.option('--save_data', prompt='Save Data(y/n)',default="y", help='Save data to file.')
+def data_revit_categories(urn,region,categories,is_sub_family,display_unit,save_data):
+    """Read Revit data by categories."""
+    token = TokenConfig.load_config()
+    propdb = PropDbReaderRevit(urn,token,region)
+    if not urn:
+        click.echo("Please provide a urn.")
+        return
+    if not categories:
+        click.echo("Please provide categories.")
+        return
+    Config.save_derivative_urn(urn)
+    Config.save_revit_categories(categories)
+    list_categories = categories.split(',')
+    if str.lower(is_sub_family) == 'y':
+        is_sub_family = True
+    else:
+        is_sub_family = False
+    if str.lower(display_unit) == 'y':
+        display_unit = True
+    else:
+        display_unit = False
+    # main function
+    print("Categories: ",list_categories)
+    df = propdb.get_data_by_categories(list_categories,is_sub_family,display_unit=display_unit)
+    if df.empty:
+        click.echo("No data found.")
+        return
+    if str.lower(save_data) == 'y':
+        cwd = os.getcwd()
+        file_path = os.path.join(cwd, 'data_categories.csv')
+        df.to_csv(file_path, index=False)
+        click.echo(f"Revit data saved to {file_path}")
+    print(tabulate(df, headers="keys", tablefmt="psql"))
+
 ## by categories and parameteres
 @apsbot.command()
 @click.option('--urn', prompt='URN',default=lambda: Config.load_derivative_urn(), help='The derivative urn of the item version.')
@@ -338,7 +380,7 @@ def data_revit_categories_parameters(urn,region,categories,parameters,is_sub_fam
         return
     if str.lower(save_data) == 'y':
         cwd = os.getcwd()
-        file_path = os.path.join(cwd, 'categories_parameters.csv')
+        file_path = os.path.join(cwd, 'data_categories_parameters.csv')
         df.to_csv(file_path, index=False)
         click.echo(f"Revit data saved to {file_path}")
     print(tabulate(df, headers="keys", tablefmt="psql"))
