@@ -105,9 +105,13 @@ python -m apsbot get-top-folder --hub_id <hubid> --project_id <projectid>
 
 ![](docs/item-version.png)
 
-### Categories
+### Revit Categories
 
 ![](docs/categories.png)
+
+### Revit Categories-Parameters
+
+![](docs/revit-data.png)
 
 ## Developer Collaboration
 
