@@ -141,3 +141,4 @@ __pycache__/
 *.csv
 *.xlsx
 *.log
+*.json
