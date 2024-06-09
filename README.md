@@ -127,6 +127,10 @@ python -m twine upload dist/*
 pip install --editable . --user
 ```
 
+## Disclaimer
+
+This is project just play for fun with free time weekend. Please use it at your own risk. I am not responsible for any damage caused by this project.
+
 
 ## Many thanks 
 
