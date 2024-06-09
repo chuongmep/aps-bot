@@ -91,7 +91,10 @@ class Config:
     @classmethod
     def load_region(cls):
         """Load the default region from a JSON file."""
-        return cls._load_from_config('DEFAULT_REGION')
+        region = cls._load_from_config('DEFAULT_REGION')
+        if region is None or region == '':
+            return 'US'
+        return region
 
     @classmethod
     def _save_to_config(cls, key, value):

@@ -243,7 +243,7 @@ def item_versions(project_id, item_id, save_data):
 
 @apsbot.command()
 @click.option('--urn', prompt='URN',default=lambda: Config.load_derivative_urn(), help='The derivative urn of the item version.')
-@click.option('--region', prompt='Region',default="US", help='The region of the item.')
+@click.option('--region', prompt='Region',default=lambda: Config.load_region(), help='The region of the item.')
 @click.option('--save_data', prompt='Save Data(y/n)',default="n", help='Save data to file.')
 def data_revit_parameters(urn,region,save_data):
     """Read all parameters by urn."""
@@ -269,7 +269,7 @@ def data_revit_parameters(urn,region,save_data):
 ## all categories 
 @apsbot.command()
 @click.option('--urn', prompt='URN',default=lambda: Config.load_derivative_urn(), help='The derivative urn of the item version.')
-@click.option('--region', prompt='Region',default="US", help='The region of the item.')
+@click.option('--region', prompt='Region',default=lambda: Config.load_region(), help='The region of the item.')
 @click.option('--save_data', prompt='Save Data(y/n)',default="n", help='Save data to file.')
 def data_revit_categories(urn,region,save_data):
     """Read all categories by urn."""
@@ -281,6 +281,11 @@ def data_revit_categories(urn,region,save_data):
     Config.save_derivative_urn(urn)
     dict_categories = propdb.get_all_categories()
     df = pd.DataFrame.from_dict(dict_categories, orient='index', columns=['Category'])
+    # rename columns index to DbId
+    df.index.name = 'DbId'
+    # add new column at left is index 
+    df.reset_index(inplace=True)
+    df.index.name = 'Index'
     if df.empty:
         click.echo("No data found.")
         return
@@ -294,7 +299,7 @@ def data_revit_categories(urn,region,save_data):
 ## by categories
 @apsbot.command()
 @click.option('--urn', prompt='URN',default=lambda: Config.load_derivative_urn(), help='The derivative urn of the item version.')
-@click.option('--region', prompt='Region',default="US", help='The region of the item.')
+@click.option('--region', prompt='Region',default=lambda: Config.load_region(), help='The region of the item.')
 @click.option('--categories', prompt='Categories',default=lambda: Config.load_revit_categories(), help='The categories of the elements.')
 @click.option('--is_sub_family', prompt='Is Sub Family(y/n)',default="n", help='The is sub family of the elements.')
 @click.option('--display_unit', prompt='Display Unit(y/n)',default="n", help='The display unit of the item.')
@@ -336,7 +341,7 @@ def data_revit_by_categories(urn,region,categories,is_sub_family,display_unit,sa
 ## by categories and parameteres
 @apsbot.command()
 @click.option('--urn', prompt='URN',default=lambda: Config.load_derivative_urn(), help='The derivative urn of the item version.')
-@click.option('--region', prompt='Region',default="US", help='The region of the item.')
+@click.option('--region', prompt='Region',default=lambda: Config.load_region(), help='The region of the item.')
 @click.option('--categories', prompt='Categories',default=lambda: Config.load_revit_categories(), help='The categories of the elements.')
 @click.option('--parameters', prompt='Parameters',default=lambda: Config.load_revit_parameters(), help='The parameters of the elements.')
 @click.option('--is_sub_family', prompt='Is Sub Family(y/n)',default="n", help='The is sub family of the elements.')
