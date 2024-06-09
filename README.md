@@ -117,6 +117,10 @@ python -m apsbot get-top-folder --hub_id <hubid> --project_id <projectid>
 
 ![](docs/revit-data.png)
 
+### Chat with bot
+
+![](docs/chatgpt.png)
+
 ## Developer Collaboration
 
 
