@@ -443,7 +443,7 @@ def data_revit_by_cats_params(urn, region, categories, parameters, is_sub_family
 @click.option('--bucket_name', prompt='Bucket Name', default=lambda: Config.load_bucket_name(), help='The key of the bucket.')
 @click.option('--bucket_key', prompt='Select Bucket Key (1: transient, 2: temporary, 3: persistent)',type=click.Choice(['1', '2', '3'], case_sensitive=False), help='The key of the bucket.')
 @click.option('--region', prompt='Region', default=lambda: Config.load_region(), help='The region of the bucket.')
-def create_bucket(bucket_name,bucket_key, region):
+def bucket_create(bucket_name,bucket_key, region):
     """This command creates a new bucket."""
     token = TokenConfig.load_config()
     bucket = Bucket(token, region)
@@ -454,6 +454,8 @@ def create_bucket(bucket_name,bucket_key, region):
     }
     bucket_key = switcher.get(bucket_key)
     result = bucket.create_bucket(bucket_name,bucket_key)
+    #save 
+    Config.save_bucket_name(bucket_name)
     if not result:
         click.echo("Bucket creation failed.")
         return
@@ -463,7 +465,7 @@ def create_bucket(bucket_name,bucket_key, region):
 # get all buckets
 @apsbot.command()
 @click.option('--region', prompt='Region', default=lambda: Config.load_region(), help='The region of the bucket.')
-def get_buckets(region):
+def buckets(region):
     """This command lists all buckets."""
     token = TokenConfig.load_config()
     bucket = Bucket(token, region)
@@ -472,3 +474,21 @@ def get_buckets(region):
         click.echo("No buckets found.")
         return
     print(tabulate(df, headers="keys", tablefmt="psql"))
+
+# upload object bucket 
+@apsbot.command()
+@click.option('--bucket_name', prompt='Bucket Name', default=lambda: Config.load_bucket_name(), help='The key of the bucket.')
+@click.option('--region', prompt='Region', default=lambda: Config.load_region(), help='The region of the bucket.')
+@click.option('--object_name', prompt='Object Name', help='The name of the object.')
+@click.option('--file_path', prompt='File Path', help='The path of the file.')
+def bucket_upload_object(bucket_name, region, object_name, file_path):
+    """This command uploads an object to a bucket."""
+    token = TokenConfig.load_config()
+    bucket = Bucket(token, region)
+    result = bucket.upload_object(bucket_name, file_path, object_name)
+    if not result:
+        click.echo("Object upload failed.")
+        return
+    click.echo("Object uploaded successfully!")
+    print(json.dumps(result, indent=4))
+

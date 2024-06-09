@@ -31,6 +31,7 @@ class Config:
         name = cls._load_from_config('BUCKET_NAME')
         if name is None:
             return 'apsbot' + str(guid.uuid4())
+        return name
     
     @classmethod
     def save_project_id(cls, project_id):
