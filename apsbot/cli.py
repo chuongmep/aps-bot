@@ -268,3 +268,28 @@ def data_revit_category(category, urn,region,display_unit,save_data):
         df.to_csv(file_path, index=False)
         click.echo(f"Revit data saved to {file_path}")
     print(tabulate(df, headers="keys", tablefmt="psql"))
+
+@apsbot.command()
+@click.option('--urn', prompt='URN',default=lambda: Config.load_derivative_urn(), help='The derivative urn of the item version.')
+@click.option('--region', prompt='Region',default="US", help='The region of the item.')
+@click.option('--save_data', prompt='Save Data(y/n)',default="n", help='Save data to file.')
+def data_revit_parameters(urn,region,save_data):
+    """Read all parameters by urn."""
+    token = TokenConfig.load_config()
+    propdb = PropDbReaderRevit(urn,token,region)
+    if not urn:
+        click.echo("Please provide a urn.")
+        return
+    Config.save_derivative_urn(urn)
+    list = propdb.get_all_parameters()
+    series = pd.Series(list)
+    df = pd.DataFrame(series, columns=['Parameter'])
+    if df.empty:
+        click.echo("No data found.")
+        return
+    if str.lower(save_data) == 'y':
+        cwd = os.getcwd()
+        file_path = os.path.join(cwd, 'parameters.csv')
+        df.to_csv(file_path, index=False)
+        click.echo(f"Revit data saved to {file_path}")
+    print(tabulate(df, headers="keys", tablefmt="psql"))
