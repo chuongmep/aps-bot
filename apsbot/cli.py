@@ -459,3 +459,16 @@ def create_bucket(bucket_name,bucket_key, region):
         return
     click.echo("Bucket created successfully!")
     print(json.dumps(result, indent=4))
+
+# get all buckets
+@apsbot.command()
+@click.option('--region', prompt='Region', default=lambda: Config.load_region(), help='The region of the bucket.')
+def get_buckets(region):
+    """This command lists all buckets."""
+    token = TokenConfig.load_config()
+    bucket = Bucket(token, region)
+    df = bucket.get_all_buckets()
+    if df.empty:
+        click.echo("No buckets found.")
+        return
+    print(tabulate(df, headers="keys", tablefmt="psql"))
