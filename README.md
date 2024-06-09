@@ -2,6 +2,8 @@
 
 Welcome to the CLI tool `apsbot`, designed to interact seamlessly with the Autodesk Platform Services (formerly Autodesk Forge) API. This tool provides a command-line interface to access and manage data across various Autodesk services.
 
+![](docs/apsbot.png)
+
 ## Installation
 
 - Install from package 
