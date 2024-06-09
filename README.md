@@ -26,6 +26,7 @@ Setup environment variables
 ```bash
 APS_CLIENT_ID = "your_client_id"
 APS_CLIENT_SECRET = "your_client_secret"
+OPENAI_API_KEY = "your_openai_api_key"
 ```
 
 ## Usage
