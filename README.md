@@ -6,7 +6,7 @@ Welcome to the CLI tool `apsbot`, designed to interact seamlessly with the Autod
 
 - Install from package 
 ```bash
-pip install apsbot
+pip install apsbot --upgrade
 ```
 
 - Install from source code
@@ -56,6 +56,8 @@ Commands
 - `set-folder`: Sets the default folder for operations that require a folder context. This simplifies subsequent commands by using the set folder as a context.
 - `show-ports`: Displays all network ports currently in use on the system. Useful for troubleshooting network issues or conflicts within the application environment.
 - `top-folders`: Retrieves batch information on all top folders in a project. Helps in navigating the project's directory structure and managing data more effectively.
+
+... and more!
 
 
 ## Examples
