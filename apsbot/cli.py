@@ -164,7 +164,7 @@ def hubs():
 @apsbot.command()
 @click.option('--hub_id', prompt='Hub Id', default=lambda: Config.load_hub_id(),
               help='The projects information from hub id.')
-@click.option('--save_data', prompt='Save Data(y/n)', help='Save data to file.')
+@click.option('--save_data', prompt='Save Data(y/n)',default='n', help='Save data to file.')
 def projects(hub_id, save_data):
     """Get batch all projects with general information by hub_id"""
     if not hub_id:
@@ -191,7 +191,7 @@ def projects(hub_id, save_data):
               help='The projects information from hub id.')
 @click.option('--project_id', prompt='Project Id', default=lambda: Config.load_project_id(),
               help='The projects information from project id.')
-@click.option('--save_data', prompt='Save Data(y/n)', help='Save data to file.')
+@click.option('--save_data', prompt='Save Data(y/n)',default='n', help='Save data to file.')
 def top_folders(hub_id, project_id, save_data):
     """Get batch all top folders with general information by hub_id and project_id"""
     if not hub_id or not project_id:
@@ -255,7 +255,7 @@ def items(project_id, folder_id, extension, is_sub_folder, save_data):
 @click.option('--project_id', prompt='Project Id', default=lambda: Config.load_project_id(),
               help='The projects information from project id.')
 @click.option('--item_id', prompt='Item Id', default=lambda: Config.load_item_id(), help='The urn of the item.')
-@click.option('--save_data', prompt='Save Data(y/n)', help='Save data to file.')
+@click.option('--save_data', prompt='Save Data(y/n)',default="n", help='Save data to file.')
 def item_versions(project_id, item_id, save_data):
     """Get batch all item versions with general information by project_id and item_id"""
 
@@ -310,7 +310,7 @@ def data_revit_parameters(urn, region, save_data):
 @click.option('--urn', prompt='URN', default=lambda: Config.load_derivative_urn(),
               help='The derivative urn of the item version.')
 @click.option('--region', prompt='Region', default=lambda: Config.load_region(), help='The region of the item.')
-@click.option('--save_data', prompt='Save Data(y/n)', default="n", help='Save data to file.')
+@click.option('--save_data', prompt='Save Data(y/n)', default='n', help='Save data to file.')
 def data_revit_categories(urn, region, save_data):
     """Read all categories by urn."""
     token = TokenConfig.load_config()
@@ -346,7 +346,7 @@ def data_revit_categories(urn, region, save_data):
               help='The categories of the elements.')
 @click.option('--is_sub_family', prompt='Is Sub Family(y/n)', default="n", help='The is sub family of the elements.')
 @click.option('--display_unit', prompt='Display Unit(y/n)', default="n", help='The display unit of the item.')
-@click.option('--save_data', prompt='Save Data(y/n)', default="y", help='Save data to file.')
+@click.option('--save_data', prompt='Save Data(y/n)', default='n', help='Save data to file.')
 def data_revit_by_categories(urn, region, categories, is_sub_family, display_unit, save_data):
     """Read Revit data by categories."""
     token = TokenConfig.load_config()
@@ -393,7 +393,7 @@ def data_revit_by_categories(urn, region, categories, is_sub_family, display_uni
               help='The parameters of the elements.')
 @click.option('--is_sub_family', prompt='Is Sub Family(y/n)', default="n", help='The is sub family of the elements.')
 @click.option('--display_unit', prompt='Display Unit(y/n)', default="n", help='The display unit of the item.')
-@click.option('--save_data', prompt='Save Data(y/n)', default="n", help='Save data to file.')
+@click.option('--save_data', prompt='Save Data(y/n)', default='n', help='Save data to file.')
 def data_revit_by_cats_params(urn, region, categories, parameters, is_sub_family, display_unit, save_data):
     """Read Revit data by categories and parameters."""
     token = TokenConfig.load_config()
