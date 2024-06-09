@@ -45,6 +45,23 @@ def show_ports():
         click.echo(f"An error occurred: {e}")
 
 @apsbot.command()
+@click.option('--folder_path', prompt='Folder Path',default=lambda: Config.load_folder_path(), help='The folder path to save data.')
+def set_folder(folder_path):
+    """This command sets the default folder for saving data."""
+    #check if user input is valid
+    if not os.path.exists(folder_path):
+        click.echo("Invalid folder path.")
+        return
+    # check if input filepath 
+    if os.path.isfile(folder_path):
+        # get folder path
+        folder = os.path.dirname(folder_path)
+        Config.save_folder_path(folder)
+    else:
+        Config.save_folder_path(folder_path)
+    click.echo(f"Default folder has been set to {folder_path}")
+
+@apsbot.command()
 @click.option('--auth_type', prompt='Select authentication type (1: 2-legged, 2: 3-legged)',type=click.Choice(['1', '2'], case_sensitive=False))
 def login(auth_type):
     """This command logs in to the Autodesk Platform Services."""
@@ -152,8 +169,8 @@ def projects(hub_id, save_data):
         click.echo("No projects found.")
         return
     if str.lower(save_data) == 'y':
-        cwd = os.getcwd()
-        file_path = os.path.join(cwd, 'projects.csv')
+        folder = Config.load_folder_path()
+        file_path = os.path.join(folder, 'projects.csv')
         df.to_csv(file_path, index=False)
         click.echo(f"Projects data saved to {file_path}")
     print(tabulate(df, headers="keys", tablefmt="psql"))
@@ -176,8 +193,8 @@ def top_folders(hub_id, project_id, save_data):
         click.echo("No top folder found.")
         return
     if str.lower(save_data) == 'y':
-        cwd = os.getcwd()
-        file_path = os.path.join(cwd, 'top_folders.csv')
+        folder = Config.load_folder_path()
+        file_path = os.path.join(folder, 'top_folders.csv')
         df.to_csv(file_path, index=False)
         click.echo(f"Top folders data saved to {file_path}")
     # just show df id,name
@@ -208,8 +225,8 @@ def items(project_id, folder_id,extension,is_sub_folder,save_data):
         click.echo("No items found.")
         return
     if str.lower(save_data) == 'y':
-        cwd = os.getcwd()
-        file_path = os.path.join(cwd, 'items.csv')
+        folder = Config.load_folder_path()
+        file_path = os.path.join(folder, 'items.csv')
         df.to_csv(file_path, index=False)
         click.echo(f"Items data saved to {file_path}")
     # just show item_id, item_name, derivative_urn
@@ -235,8 +252,8 @@ def item_versions(project_id, item_id, save_data):
         click.echo("No top folder found.")
         return
     if str.lower(save_data) == 'y':
-        cwd = os.getcwd()
-        file_path = os.path.join(cwd, 'item_versions.csv')
+        folder = Config.load_folder_path()
+        file_path = os.path.join(folder, 'item_versions.csv')
         df.to_csv(file_path, index=False)
         click.echo(f"Item Versions data saved to {file_path}")
     print(tabulate(df, headers="keys", tablefmt="psql") )
@@ -260,8 +277,8 @@ def data_revit_parameters(urn,region,save_data):
         click.echo("No data found.")
         return
     if str.lower(save_data) == 'y':
-        cwd = os.getcwd()
-        file_path = os.path.join(cwd, 'parameters.csv')
+        folder = Config.load_folder_path()
+        file_path = os.path.join(folder, 'parameters.csv')
         df.to_csv(file_path, index=False)
         click.echo(f"Revit data saved to {file_path}")
     print(tabulate(df, headers="keys", tablefmt="psql"))
@@ -290,8 +307,8 @@ def data_revit_categories(urn,region,save_data):
         click.echo("No data found.")
         return
     if str.lower(save_data) == 'y':
-        cwd = os.getcwd()
-        file_path = os.path.join(cwd, 'categories.csv')
+        folder = Config.load_folder_path()
+        file_path = os.path.join(folder, 'categories.csv')
         df.to_csv(file_path, index=False)
         click.echo(f"Revit data saved to {file_path}")
     print(tabulate(df, headers="keys", tablefmt="psql"))
@@ -332,8 +349,8 @@ def data_revit_by_categories(urn,region,categories,is_sub_family,display_unit,sa
         click.echo("No data found.")
         return
     if str.lower(save_data) == 'y':
-        cwd = os.getcwd()
-        file_path = os.path.join(cwd, 'data_categories.csv')
+        folder = Config.load_folder_path()
+        file_path = os.path.join(folder, 'data_categories.csv')
         df.to_csv(file_path, index=False)
         click.echo(f"Revit data saved to {file_path}")
     print(tabulate(df, headers="keys", tablefmt="psql"))
@@ -381,8 +398,8 @@ def data_revit_by_cats_params(urn,region,categories,parameters,is_sub_family,dis
         click.echo("No data found.")
         return
     if str.lower(save_data) == 'y':
-        cwd = os.getcwd()
-        file_path = os.path.join(cwd, 'data_categories_parameters.csv')
+        folder = Config.load_folder_path()
+        file_path = os.path.join(folder, 'data_categories_params.csv')
         df.to_csv(file_path, index=False)
         click.echo(f"Revit data saved to {file_path}")
     print(tabulate(df, headers="keys", tablefmt="psql"))

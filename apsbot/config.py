@@ -5,6 +5,21 @@ class Config:
     config_path = 'config.json'
 
     @classmethod
+    def save_folder_path(cls, path):
+        """Save the folder data to a JSON file."""
+        # check if the folder_data exists
+        if not os.path.exists(path):
+            os.makedirs(path)
+        cls._save_to_config('FOLDER_PATH', path)
+    
+    @classmethod
+    def load_folder_path(cls):
+        """Load the folder data from a JSON file."""
+        current_folder = cls._load_from_config('FOLDER_PATH')
+        if current_folder is None:
+            return os.getcwd()
+        return current_folder
+    @classmethod
     def save_project_id(cls, project_id):
         """Save the default project ID to a JSON file."""
         cls._save_to_config('DEFAULT_PROJECT_ID', project_id)
@@ -108,7 +123,8 @@ class Config:
         config_data[key] = value
 
         with open(cls.config_path, 'w') as file:
-            json.dump(config_data, file)
+            #save indent for easy read
+            json.dump(config_data, file, indent=4)
 
     @classmethod
     def _load_from_config(cls, key):
