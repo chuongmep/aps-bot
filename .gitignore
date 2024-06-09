@@ -136,3 +136,8 @@ callbot.egg-info/
 
 # Ignore __pycache__ directories
 __pycache__/
+
+# ignore csv, xlsx, and log files
+*.csv
+*.xlsx
+*.log
