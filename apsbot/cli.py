@@ -43,6 +43,25 @@ def show_ports():
         click.echo(f"An error occurred: {e}")
 
 @apsbot.command()
+@click.option('--auth_type', prompt='Select authentication type (1: 2-legged, 2: 3-legged)',type=click.Choice(['1', '2'], case_sensitive=False))
+def login(auth_type):
+    """This command logs in to the Autodesk Platform Services."""
+    auth = Auth(None)  # Assuming None for simplicity, replace with actual configuration if needed
+    if auth_type == '1':
+        token = auth.auth2leg()
+        TokenConfig.save_config(token)
+        click.echo("Token saved to token_config.json. Authentication type: 2-legged.")
+    elif auth_type == '2':
+        token = auth.auth3leg()
+        TokenConfig.save_config(token)
+        click.echo("Token saved to token_config.json. Authentication type: 3-legged.")
+    else:
+        click.echo("Invalid authentication type.")
+        return
+
+    click.echo("Login successful!")
+
+@apsbot.command()
 def auth2leg():
     """This command authenticates with 2-legged OAuth and copies the token to the clipboard."""
     auth = Auth()
