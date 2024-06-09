@@ -1,6 +1,8 @@
 import click
 from aps_toolkit import Auth, BIM360, AuthGoogleColab
 from aps_toolkit import Token
+from aps_toolkit import Bucket
+from aps_toolkit.Bucket import PublicKey
 from aps_toolkit import PropDbReaderRevit
 import pyperclip
 from tabulate import tabulate
@@ -434,3 +436,26 @@ def data_revit_by_cats_params(urn, region, categories, parameters, is_sub_family
         df.to_csv(file_path, index=False)
         click.echo(f"Revit data saved to {file_path}")
     print(tabulate(df, headers="keys", tablefmt="psql"))
+
+
+
+@apsbot.command()
+@click.option('--bucket_name', prompt='Bucket Name', default=lambda: Config.load_bucket_name(), help='The key of the bucket.')
+@click.option('--bucket_key', prompt='Select Bucket Key (1: transient, 2: temporary, 3: persistent)',type=click.Choice(['1', '2', '3'], case_sensitive=False), help='The key of the bucket.')
+@click.option('--region', prompt='Region', default=lambda: Config.load_region(), help='The region of the bucket.')
+def create_bucket(bucket_name,bucket_key, region):
+    """This command creates a new bucket."""
+    token = TokenConfig.load_config()
+    bucket = Bucket(token, region)
+    switcher = {
+        '1': PublicKey.transient,
+        '2': PublicKey.temporary,
+        '3': PublicKey.persistent
+    }
+    bucket_key = switcher.get(bucket_key)
+    result = bucket.create_bucket(bucket_name,bucket_key)
+    if not result:
+        click.echo("Bucket creation failed.")
+        return
+    click.echo("Bucket created successfully!")
+    print(json.dumps(result, indent=4))

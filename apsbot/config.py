@@ -1,6 +1,6 @@
 import json
 import os
-
+import uuid as guid
 class Config:
     config_path = 'config.json'
 
@@ -19,6 +19,19 @@ class Config:
         if current_folder is None:
             return os.getcwd()
         return current_folder
+    
+    @classmethod
+    def save_bucket_name(cls, bucket_name):
+        """Save the bucket name to a JSON file."""
+        cls._save_to_config('BUCKET_NAME', bucket_name)
+    
+    @classmethod
+    def load_bucket_name(cls):
+        """Load the bucket name from a JSON file."""
+        name = cls._load_from_config('BUCKET_NAME')
+        if name is None:
+            return 'apsbot' + str(guid.uuid4())
+    
     @classmethod
     def save_project_id(cls, project_id):
         """Save the default project ID to a JSON file."""
