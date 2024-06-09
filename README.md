@@ -54,18 +54,12 @@ python -m apsbot get-top-folder --hub_id <hubid> --project_id <projectid>
 
 ![](docs/item-version.png)
 
-## Developer Colaboration
+## Developer Collaboration
 
 
 Build package with setuptools
 ```bash
 python setup.py sdist bdist_wheel
-```
-
-Install package from local
-
-```bash
-pip install .\dist\callbot-0.1.0-py3-none-any.whl --user
 ```
 
 ## Quick Testing 
