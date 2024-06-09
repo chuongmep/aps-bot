@@ -4,6 +4,13 @@ Welcome to the CLI tool `apsbot`, designed to interact seamlessly with the Autod
 
 ## Installation
 
+- Install from package 
+```bash
+pip install apsbot
+```
+
+- Install from source code
+
 Before you can use `apsbot`, you need to install it. Clone the repository and install it using pip:
 
 ```bash
@@ -20,7 +27,13 @@ APS_CLIENT_SECRET = "your_client_secret"
 ```
 
 ## Usage
+- Setting path configuration
 
+```bash
+apsbot [OPTIONS] COMMAND [ARGS]...
+```
+
+- Without setting path configuration
 ```bash
 python -m apsbot [OPTIONS] COMMAND [ARGS]...
 ```
