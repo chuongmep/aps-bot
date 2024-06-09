@@ -142,3 +142,9 @@ __pycache__/
 *.xlsx
 *.log
 *.json
+
+#ignore jetbrains files
+.idea/
+*.iml
+*.iws
+*.ipr
