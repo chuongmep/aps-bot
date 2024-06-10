@@ -400,6 +400,31 @@ def revit_family_types(urn, region, save_data):
         click.echo(f"Revit data saved to {file_path}")
     print(tabulate(df, headers="keys", tablefmt="psql"))
 
+# revit categories and family and types
+@apsbot.command()
+@click.option('--urn', prompt='URN', default=lambda: Config.load_derivative_urn(),
+              help='The derivative urn of the item version.')
+@click.option('--region', prompt='Region', default=lambda: Config.load_region(), help='The region of the item.')
+@click.option('--save_data', prompt='Save Data(y/n)', default='n', help='Save data to file.')
+def revit_categories_families_types(urn, region, save_data):
+    """Read all categories, families, and family types by urn."""
+    token = TokenConfig.load_config()
+    propdb = PropDbReaderRevit(urn, token, region)
+    if not urn:
+        click.echo("Please provide a urn.")
+        return
+    Config.save_derivative_urn(urn)
+    df = propdb.get_categories_families_types()
+    if df.empty:
+        click.echo("No data found.")
+        return
+    if str.lower(save_data) == 'y':
+        folder = Config.load_folder_path()
+        file_path = os.path.join(folder, 'categories_families_types.csv')
+        df.to_csv(file_path, index=False)
+        click.echo(f"Revit data saved to {file_path}")
+    print(tabulate(df, headers="keys", tablefmt="psql"))
+
 ## by categories
 @apsbot.command()
 @click.option('--urn', prompt='URN', default=lambda: Config.load_derivative_urn(),
