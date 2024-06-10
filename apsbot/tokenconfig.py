@@ -14,7 +14,7 @@ class TokenConfig:
             'APS_EXPIRES_IN': token.expires_in,
         }
         with open(cls.config_path, 'w') as file:
-            json.dump(token_data, file)
+            json.dump(token_data, file, indent=4)
 
     @classmethod
     def load_config(cls):

@@ -16,7 +16,7 @@ pip install apsbot --upgrade
 Before you can use `apsbot`, you need to install it. Clone the repository and install it using pip:
 
 ```bash
-pip install git+https://github.com/chuongmep/aps-bot.git
+pip install git+https://github.com/chuongmep/aps-bot.git --upgrade
 ```
 
 ## Requirements 
