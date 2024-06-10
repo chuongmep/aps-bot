@@ -285,7 +285,7 @@ def item_versions(project_id, item_id, save_data):
               help='The derivative urn of the item version.')
 @click.option('--region', prompt='Region', default=lambda: Config.load_region(), help='The region of the item.')
 @click.option('--save_data', prompt='Save Data(y/n)', default="n", help='Save data to file.')
-def data_revit_parameters(urn, region, save_data):
+def revit_parameters(urn, region, save_data):
     """Read all parameters by urn."""
     token = TokenConfig.load_config()
     propdb = PropDbReaderRevit(urn, token, region)
@@ -313,7 +313,7 @@ def data_revit_parameters(urn, region, save_data):
               help='The derivative urn of the item version.')
 @click.option('--region', prompt='Region', default=lambda: Config.load_region(), help='The region of the item.')
 @click.option('--save_data', prompt='Save Data(y/n)', default='n', help='Save data to file.')
-def data_revit_categories(urn, region, save_data):
+def revit_categories(urn, region, save_data):
     """Read all categories by urn."""
     token = TokenConfig.load_config()
     propdb = PropDbReaderRevit(urn, token, region)
@@ -338,6 +338,67 @@ def data_revit_categories(urn, region, save_data):
         click.echo(f"Revit data saved to {file_path}")
     print(tabulate(df, headers="keys", tablefmt="psql"))
 
+# families 
+@apsbot.command()
+@click.option('--urn', prompt='URN', default=lambda: Config.load_derivative_urn(),
+              help='The derivative urn of the item version.')
+@click.option('--region', prompt='Region', default=lambda: Config.load_region(), help='The region of the item.')
+@click.option('--save_data', prompt='Save Data(y/n)', default='n', help='Save data to file.')
+def revit_families(urn, region, save_data):
+    """Read all families by urn."""
+    token = TokenConfig.load_config()
+    propdb = PropDbReaderRevit(urn, token, region)
+    if not urn:
+        click.echo("Please provide a urn.")
+        return
+    Config.save_derivative_urn(urn)
+    dict_families = propdb.get_all_families()
+    df = pd.DataFrame.from_dict(dict_families, orient='index', columns=['Family'])
+    # rename columns index to DbId
+    df.index.name = 'DbId'
+    # add new column at left is index
+    df.reset_index(inplace=True)
+    df.index.name = 'Index'
+    if df.empty:
+        click.echo("No data found.")
+        return
+    if str.lower(save_data) == 'y':
+        folder = Config.load_folder_path()
+        file_path = os.path.join(folder, 'families.csv')
+        df.to_csv(file_path, index=False)
+        click.echo(f"Revit data saved to {file_path}")
+    print(tabulate(df, headers="keys", tablefmt="psql"))
+
+# family types 
+@apsbot.command()
+@click.option('--urn', prompt='URN', default=lambda: Config.load_derivative_urn(),
+              help='The derivative urn of the item version.')
+@click.option('--region', prompt='Region', default=lambda: Config.load_region(), help='The region of the item.')
+@click.option('--save_data', prompt='Save Data(y/n)', default='n', help='Save data to file.')
+def revit_family_types(urn, region, save_data):
+    """Read all family types by urn."""
+    token = TokenConfig.load_config()
+    propdb = PropDbReaderRevit(urn, token, region)
+    if not urn:
+        click.echo("Please provide a urn.")
+        return
+    Config.save_derivative_urn(urn)
+    dict_families = propdb.get_all_families_types()
+    df = pd.DataFrame.from_dict(dict_families, orient='index', columns=['Family Type'])
+    # rename columns index to DbId
+    df.index.name = 'DbId'
+    # add new column at left is index
+    df.reset_index(inplace=True)
+    df.index.name = 'Index'
+    if df.empty:
+        click.echo("No data found.")
+        return
+    if str.lower(save_data) == 'y':
+        folder = Config.load_folder_path()
+        file_path = os.path.join(folder, 'family_types.csv')
+        df.to_csv(file_path, index=False)
+        click.echo(f"Revit data saved to {file_path}")
+    print(tabulate(df, headers="keys", tablefmt="psql"))
 
 ## by categories
 @apsbot.command()
@@ -536,7 +597,7 @@ def bucket_delete_object(bucket_name, region, object_name):
         click.echo("Object deletion failed.")
         return
     click.echo("Object deleted successfully!")
-
+    
 @apsbot.command()
 def chat():
     """This command starts a chat session with the bot."""
