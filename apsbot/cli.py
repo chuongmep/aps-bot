@@ -151,16 +151,16 @@ def auth3leg(callback, scope):
     print("Note: Token copied to clipboard.")
 
 
-    @apsbot.command()
-    def hubs():
-        """This command lists all hubs."""
-        token = TokenConfig.load_config()
-        bim360 = BIM360(token)
-        result = bim360.get_hubs()
-        if not result:
-            click.echo("No hubs found.")
-            return
-        print(json.dumps(result, indent=4))
+@apsbot.command()
+def hubs():
+    """This command lists all hubs."""
+    token = TokenConfig.load_config()
+    bim360 = BIM360(token)
+    result = bim360.get_hubs()
+    if not result:
+        click.echo("No hubs found.")``
+        return
+    print(json.dumps(result, indent=4))
 
 
 @apsbot.command()
