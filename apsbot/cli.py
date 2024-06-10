@@ -14,7 +14,11 @@ import pandas as pd
 import json
 import requests
 import base64
-from openai import OpenAI
+from langchain.agents.agent_types import AgentType
+from langchain_experimental.agents.agent_toolkits import create_pandas_dataframe_agent
+from langchain_openai import ChatOpenAI
+import pandas as pd
+from langchain_openai import OpenAI
 
 @click.group()
 def apsbot():
@@ -652,36 +656,21 @@ def chat_data(folder_path):
         click.echo("Invalid folder path.")
         return
     # Read and process CSV files in the specified folder
-    knowledge_base = read_and_process_csv(folder_path)
     Config.save_folder_path(folder_path)
+    dfs = read_and_process_csv(folder_path)
     while True:
         user_input = input("You: ")
         if user_input.lower() == 'exit':
             click.echo("Ending chat session.")
             break
-        bot_response = interact_with_chatgpt(knowledge_base, user_input)
+        agent = create_pandas_dataframe_agent(OpenAI(temperature=0), dfs, verbose=True)
+        bot_response = agent.invoke(user_input)
         click.echo(f"Bot: {bot_response}")
 
 def read_and_process_csv(folder_path):
     # List all CSV files in the specified folder
-    csv_files = [file for file in os.listdir(folder_path) if file.endswith('.csv')]
-    print("CSV files: ", csv_files)
-
-    # Store knowledge context in a dictionary
-    knowledge_base = {}
-
-    # Process each CSV file
-    for file in csv_files:
-        file_path = os.path.join(folder_path, file)
-        data = pd.read_csv(file_path)
-        
-        # Extract some summary statistics or specific information
-        summary = data.describe(include='all').to_string()
-        
-        # Add this information to the knowledge base with file name as key
-        knowledge_base[file] = summary
-    
-    return knowledge_base
+    dataframes = [pd.read_csv(os.path.join(folder_path, file)) for file in os.listdir(folder_path) if file.endswith('.csv')]
+    return dataframes
 def interact_with_chatgpt(knowledge_base, query):
     # Format the input for the chat model
     knowledge_summary = '\n'.join([f"{key}: {value}" for key, value in knowledge_base.items()])

@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="apsbot",
-    version="0.1.9",
+    version="0.2.0",
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
@@ -12,6 +12,9 @@ setup(
         "pyperclip==1.8.2",
         "tabulate==0.9.0",
         "openai==1.33.0",
+        "langchain-openai"=="0.1.8",
+        "langchain_experimental==0.0.60",
+        "langchain"=="0.2.3"
     ],
     entry_points={
         "console_scripts": [
