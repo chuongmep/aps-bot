@@ -3,15 +3,15 @@ from setuptools import setup, find_packages
 
 setup(
     name="apsbot",
-    version="0.1.5",
+    version="0.1.6",
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        "click",
+        "click==8.1.3",
         "aps-toolkit",
-        "pyperclip",
-        "tabulate",
-        "openai"
+        "pyperclip==1.8.2",
+        "tabulate==0.9.0",
+        "openai==1.33.0",
     ],
     entry_points={
         "console_scripts": [
