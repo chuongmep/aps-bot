@@ -648,8 +648,12 @@ def chat():
 def chat_data(folder_path):
     """This command starts a chat with knowledge based on data in the specified folder."""
     click.echo("Starting chat with the bot. Type 'exit' to end the chat.")
+    if not os.path.exists(folder_path):
+        click.echo("Invalid folder path.")
+        return
     # Read and process CSV files in the specified folder
     knowledge_base = read_and_process_csv(folder_path)
+    Config.save_folder_path(folder_path)
     while True:
         user_input = input("You: ")
         if user_input.lower() == 'exit':
