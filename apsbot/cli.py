@@ -158,7 +158,7 @@ def hubs():
     bim360 = BIM360(token)
     result = bim360.get_hubs()
     if not result:
-        click.echo("No hubs found.")``
+        click.echo("No hubs found.")
         return
     print(json.dumps(result, indent=4))
 
