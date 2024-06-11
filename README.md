@@ -55,7 +55,11 @@ Chat With AI Bot (OpenAI) to do data analysis and have fun.
 
 ![](docs/chat.gif)
 
+Revit Data Analysis Example :
 
+![](docs/revit-rooms.png)
+
+... More, please explore by yourself.
 
 ## Contributing
 
