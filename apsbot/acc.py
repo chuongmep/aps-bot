@@ -5,10 +5,11 @@ import json
 from .tokenconfig import TokenConfig
 from tabulate import tabulate
 import os
-
+import pandas as pd
 
 @click.command()
-def hubs():
+@click.option('--save_data', prompt='Save Data(y/n)', default='n', help='Save data to file.')
+def hubs(save_data):
     """This command lists all hubs."""
     token = TokenConfig.load_config()
     bim360 = BIM360(token)
@@ -16,7 +17,23 @@ def hubs():
     if not result:
         click.echo("No hubs found.")
         return
-    print(json.dumps(result, indent=4))
+    if str.lower(save_data) == 'y':
+        folder = Config.load_folder_path()
+        file_path = os.path.join(folder, 'hubs.json')
+        with open(file_path, 'w') as f:
+            json.dump(result, f, indent=4)
+        click.echo(f"Hubs data saved to {file_path}")
+    # get hubids and names show dataframe from result json
+    df = pd.DataFrame()
+    for hub in result["data"]:
+        if hub["type"] =="hubs":
+            id = hub["id"]
+            name = hub["attributes"]["name"]
+            region = hub["attributes"]["region"]
+            type = hub["attributes"]["extension"]["type"]
+            df = pd.concat([df, pd.DataFrame({"id": [id], "name": [name], "region": [region], "type": [type]})])
+    print(tabulate(df, headers="keys", tablefmt="psql"))
+
 
 
 @click.command()
