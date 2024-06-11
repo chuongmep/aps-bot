@@ -1,6 +1,11 @@
 import json
 import os
 from aps_toolkit import Token
+from aps_toolkit import ClientType
+from aps_toolkit import RevokeType
+from aps_toolkit import Auth
+
+
 class TokenConfig:
     config_path = 'token_config.json'
 
@@ -22,10 +27,19 @@ class TokenConfig:
         if not os.path.exists(cls.config_path):
             return None
         with open(cls.config_path, 'r') as file:
-            token_data  = json.load(file)
+            token_data = json.load(file)
             access_token = token_data['APS_ACCESS_TOKEN']
             refresh_token = token_data['APS_REFRESH_TOKEN']
             token_type = token_data['APS_TOKEN_TYPE']
             expires_in = token_data['APS_EXPIRES_IN']
-            token = Token(access_token, token_type, refresh_token, expires_in)
-            return token
+            token = Token(access_token, token_type, expires_in, refresh_token)
+            if token.refresh_token is not None and token.access_token is not None and token.refresh_token != 'null':
+                status = token.introspect(ClientType.PRIVATE)
+                if status['active']:
+                    return token
+                else:
+                    print("Token is expired.")
+                    token.revoke(RevokeType.REFRESH_TOKEN_PRIVATE)
+            else:
+                return Auth().auth2leg()
+        return Auth().auth2leg()

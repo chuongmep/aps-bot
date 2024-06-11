@@ -43,7 +43,8 @@ apsbot.add_command(revit_family_types)
 apsbot.add_command(revit_categories_families_types)
 apsbot.add_command(data_revit_by_categories)
 apsbot.add_command(data_revit_by_cats_params)
-
+apsbot.add_command(data_revit_by_family)
+apsbot.add_command(data_revit_by_family_types)
 # chat
 apsbot.add_command(chat)
 apsbot.add_command(chat_data)
