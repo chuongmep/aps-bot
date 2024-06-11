@@ -20,6 +20,7 @@ apsbot.add_command(auth2leg)
 apsbot.add_command(auth3leg)
 apsbot.add_command(login)
 apsbot.add_command(show_ports)
+apsbot.add_command(refresh_token)
 # bucket
 apsbot.add_command(buckets)
 apsbot.add_command(bucket_create)

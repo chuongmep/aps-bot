@@ -34,24 +34,9 @@ def login(auth_type):
 def refresh_token():
     """This command refreshes the access token."""
     token = TokenConfig.load_config()
-    if not token:
-        click.echo("No token found.")
-        return
-    url = "https://developer.api.autodesk.com/authentication/v2/revoke"
-    client_id = os.getenv("APS_CLIENT_ID")
-    client_secret = os.getenv("APS_CLIENT_SECRET")
-    auth = f"Basic {base64.b64encode(f'{client_id}:{client_secret}'.encode()).decode()}"
-    headers = {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Authorization": auth
-    }
-    data = {
-        "token": token.refresh_token,
-        "token_type_hint": "refresh_token"
-    }
-    result = requests.post(url, headers=headers, data=data)
-    if result.status_code != 200:
-        raise Exception(result.content)
+    auth = Auth()
+    new_token = auth.refresh_new_token(token.refresh_token)
+    TokenConfig.save_config(new_token)
     print("Refresh Token Success!")
 
 

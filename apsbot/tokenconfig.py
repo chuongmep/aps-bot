@@ -40,6 +40,11 @@ class TokenConfig:
                 else:
                     print("Token is expired.")
                     token.revoke(RevokeType.REFRESH_TOKEN_PRIVATE)
+                    auth = Auth()
+                    token = auth.refresh_new_token(token.refresh_token)
+                    cls.save_config(token)
+                    return token
             else:
-                return Auth().auth2leg()
-        return Auth().auth2leg()
+                token = Auth().auth2leg()
+                cls.save_config(token)
+        return token
