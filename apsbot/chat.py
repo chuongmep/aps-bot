@@ -4,10 +4,11 @@ import pandas as pd
 from langchain_experimental.agents.agent_toolkits import create_pandas_dataframe_agent
 from langchain_openai import OpenAI
 from .config import Config
-
+import openai
 
 @click.command()
-def chat():
+@click.option('--model_name', prompt='Model', default=lambda: Config.load_ai_model(), help='The model to use.')
+def chat(model_name):
     """This command starts a chat session with the bot."""
     click.echo("Starting chat with the bot. Type 'exit' to end the chat.")
     client = OpenAI()
@@ -16,16 +17,16 @@ def chat():
         if user_input.lower() == 'exit':
             click.echo("Ending chat session.")
             break
-        chat_complete = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": user_input}
-            ]
+        messages_pompt = []
+        messages_pompt += [{"role":"user", "content": user_input}]
+        response = openai.chat.completions.create(
+            messages = messages_pompt,
+            model=model_name,
+            temperature=0,
+            max_tokens=500,
         )
-        bot_response = chat_complete.choices[0].message.content
+        bot_response = response.choices[0].message.content
         click.echo(f"Bot: {bot_response}")
-
 
 @click.command()
 @click.option('--folder_path', prompt='Folder Path', default=lambda: Config.load_folder_path(), help='The folder path.')

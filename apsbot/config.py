@@ -147,6 +147,18 @@ class Config:
         if region is None or region == '':
             return 'US'
         return region
+    @classmethod
+    def save_ai_model(cls, ai_model):
+        """Save the default AI model to a JSON file."""
+        cls._save_to_config('DEFAULT_AI_MODEL', ai_model)
+    
+    @classmethod
+    def load_ai_model(cls):
+        """Load the default AI model from a JSON file."""
+        model = cls._load_from_config('DEFAULT_AI_MODEL')
+        if model is None or model == '':
+            return 'gpt-3.5-turbo'
+        return model
 
     @classmethod
     def _save_to_config(cls, key, value):
