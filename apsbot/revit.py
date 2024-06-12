@@ -16,6 +16,7 @@ import warnings
 def revit_parameters(urn, region, save_data):
     """Read all parameters by urn."""
     token = TokenConfig.load_config()
+    Config.save_region(region)
     propdb = PropDbReaderRevit(urn, token, region)
     if not urn:
         click.echo("Please provide a urn.")
@@ -44,6 +45,7 @@ def revit_parameters(urn, region, save_data):
 def revit_categories(urn, region, save_data):
     """Read all categories by urn."""
     token = TokenConfig.load_config()
+    Config.save_region(region)
     propdb = PropDbReaderRevit(urn, token, region)
     if not urn:
         click.echo("Please provide a urn.")
@@ -76,6 +78,7 @@ def revit_categories(urn, region, save_data):
 def revit_families(urn, region, save_data):
     """Read all families by urn."""
     token = TokenConfig.load_config()
+    Config.save_region(region)
     propdb = PropDbReaderRevit(urn, token, region)
     if not urn:
         click.echo("Please provide a urn.")
@@ -108,6 +111,7 @@ def revit_families(urn, region, save_data):
 def revit_family_types(urn, region, save_data):
     """Read all family types by urn."""
     token = TokenConfig.load_config()
+    Config.save_region(region)
     propdb = PropDbReaderRevit(urn, token, region)
     if not urn:
         click.echo("Please provide a urn.")
@@ -140,6 +144,7 @@ def revit_family_types(urn, region, save_data):
 def revit_categories_families_types(urn, region, save_data):
     """Read all categories, families, and family types by urn."""
     token = TokenConfig.load_config()
+    Config.save_region(region)
     propdb = PropDbReaderRevit(urn, token, region)
     if not urn:
         click.echo("Please provide a urn.")
@@ -170,6 +175,7 @@ def revit_categories_families_types(urn, region, save_data):
 def data_revit_by_categories(urn, region, categories, is_sub_family, display_unit, save_data):
     """Read Revit data by categories."""
     token = TokenConfig.load_config()
+    Config.save_region(region)
     propdb = PropDbReaderRevit(urn, token, region)
     if not urn:
         click.echo("Please provide a urn.")
@@ -216,6 +222,7 @@ def data_revit_by_family(urn, region, families, is_sub_family, display_unit, sav
     """Read Revit data by family."""
 
     token = TokenConfig.load_config()
+    Config.save_region(region)
     propdb = PropDbReaderRevit(urn, token, region)
     if not urn:
         click.echo("Please provide a urn.")
@@ -260,6 +267,7 @@ def data_revit_by_family(urn, region, families, is_sub_family, display_unit, sav
 def data_revit_by_family_types(urn, region, family_types, display_unit, save_data):
     """Read Revit data by family types."""
     token = TokenConfig.load_config()
+    Config.save_region(region)
     propdb = PropDbReaderRevit(urn, token, region)
     if not urn:
         click.echo("Please provide a urn.")
@@ -303,6 +311,7 @@ def data_revit_by_family_types(urn, region, family_types, display_unit, save_dat
 def data_revit_by_cats_params(urn, region, categories, parameters, is_sub_family, display_unit, save_data):
     """Read Revit data by categories and parameters."""
     token = TokenConfig.load_config()
+    Config.save_region(region)
     propdb = PropDbReaderRevit(urn, token, region)
     if not urn:
         click.echo("Please provide a urn.")

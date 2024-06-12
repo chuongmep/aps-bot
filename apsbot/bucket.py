@@ -16,6 +16,7 @@ from tabulate import tabulate
 def bucket_create(bucket_name, bucket_key, region):
     """This command creates a new bucket."""
     token = TokenConfig.load_config()
+    Config.save_region(region)
     Config.save_bucket_name(bucket_name)
     bucket = Bucket(token, region)
     switcher = {
@@ -40,6 +41,7 @@ def bucket_create(bucket_name, bucket_key, region):
 def buckets(region):
     """This command lists all buckets."""
     token = TokenConfig.load_config()
+    Config.save_region(region)
     bucket = Bucket(token, region)
     df = bucket.get_all_buckets()
     if df.empty:
@@ -56,6 +58,7 @@ def buckets(region):
 def bucket_objects(bucket_name, region):
     """This command lists all objects in a bucket."""
     token = TokenConfig.load_config()
+    Config.save_region(region)
     Config.save_bucket_name(bucket_name)
     bucket = Bucket(token, region)
     df = bucket.get_objects(bucket_name)
@@ -75,6 +78,7 @@ def bucket_objects(bucket_name, region):
 def bucket_upload_object(bucket_name, region, object_name, file_path):
     """This command uploads an object to a bucket."""
     token = TokenConfig.load_config()
+    Config.save_region(region)
     Config.save_bucket_object_name(object_name)
     Config.save_bucket_name(bucket_name)
     bucket = Bucket(token, region)
@@ -96,6 +100,7 @@ def bucket_upload_object(bucket_name, region, object_name, file_path):
 def bucket_download_object(bucket_name, region, object_name, file_path):
     """This command downloads an object from a bucket."""
     token = TokenConfig.load_config()
+    Config.save_region(region)
     Config.save_bucket_object_name(object_name)
     Config.save_bucket_name(bucket_name)
     bucket = Bucket(token, region)
@@ -115,6 +120,7 @@ def bucket_download_object(bucket_name, region, object_name, file_path):
 def bucket_delete_object(bucket_name, region, object_name):
     """This command deletes an object from a bucket."""
     token = TokenConfig.load_config()
+    Config.save_region(region)
     Config.save_bucket_object_name(object_name)
     Config.save_bucket_name(bucket_name)
     bucket = Bucket(token, region)
