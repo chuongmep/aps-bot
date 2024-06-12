@@ -49,7 +49,7 @@ def buckets(region):
 
 # get objects
 @click.command()
-@click.option('--bucket_name', prompt='Bucket Name', default=lambda: Config.load_bucket_name(),
+@click.option('--bucket_name', prompt='Bucket Name', default=lambda: Config.load_bucket_object_name(),
               help='The key of the bucket.')
 @click.option('--region', prompt='Region', default=lambda: Config.load_region(), help='The region of the bucket.')
 def bucket_objects(bucket_name, region):
@@ -68,7 +68,7 @@ def bucket_objects(bucket_name, region):
 @click.option('--bucket_name', prompt='Bucket Name', default=lambda: Config.load_bucket_name(),
               help='The key of the bucket.')
 @click.option('--region', prompt='Region', default=lambda: Config.load_region(), help='The region of the bucket.')
-@click.option('--object_name', prompt='Object Name', help='The name of the object.')
+@click.option('--object_name', prompt='Object Name',default=lambda: Config.load_bucket_object_name(), help='The name of the object.')
 @click.option('--file_path', prompt='File Path', help='The path of the file.')
 def bucket_upload_object(bucket_name, region, object_name, file_path):
     """This command uploads an object to a bucket."""
@@ -87,7 +87,7 @@ def bucket_upload_object(bucket_name, region, object_name, file_path):
 @click.option('--bucket_name', prompt='Bucket Name', default=lambda: Config.load_bucket_name(),
               help='The key of the bucket.')
 @click.option('--region', prompt='Region', default=lambda: Config.load_region(), help='The region of the bucket.')
-@click.option('--object_name', prompt='Object Name', help='The name of the object.')
+@click.option('--object_name', prompt='Object Name',default=lambda: Config.load_bucket_object_name(), help='The name of the object.')
 @click.option('--file_path', prompt='File Path', help='The path of the file.')
 def bucket_download_object(bucket_name, region, object_name, file_path):
     """This command downloads an object from a bucket."""
@@ -105,7 +105,7 @@ def bucket_download_object(bucket_name, region, object_name, file_path):
 @click.option('--bucket_name', prompt='Bucket Name', default=lambda: Config.load_bucket_name(),
               help='The key of the bucket.')
 @click.option('--region', prompt='Region', default=lambda: Config.load_region(), help='The region of the bucket.')
-@click.option('--object_name', prompt='Object Name', help='The name of the object.')
+@click.option('--object_name', prompt='Object Name',default=lambda: Config.load_bucket_object_name(), help='The name of the object.')
 def bucket_delete_object(bucket_name, region, object_name):
     """This command deletes an object from a bucket."""
     token = TokenConfig.load_config()

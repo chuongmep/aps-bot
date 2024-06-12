@@ -2,7 +2,6 @@ import json
 import os
 import uuid as guid
 
-
 class Config:
     config_path = 'config.json'
 
@@ -31,6 +30,18 @@ class Config:
     def load_bucket_name(cls):
         """Load the bucket name from a JSON file."""
         name = cls._load_from_config('BUCKET_NAME')
+        if name is None:
+            return 'apsbot' + str(guid.uuid4())
+        return name
+    @classmethod
+    def save_bucket_object_name(cls, bucket_object_name):
+        """Save the bucket object name to a JSON file."""
+        cls._save_to_config('BUCKET_OBJECT_NAME', bucket_object_name)
+    
+    @classmethod
+    def load_bucket_object_name(cls):
+        """Load the bucket object name from a JSON file."""
+        name = cls._load_from_config('BUCKET_OBJECT_NAME')
         if name is None:
             return 'apsbot' + str(guid.uuid4())
         return name
