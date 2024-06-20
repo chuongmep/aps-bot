@@ -19,7 +19,9 @@ def login(auth_type):
         TokenConfig.save_config(token)
         click.echo("Token saved to token_config.json. Authentication type: 2-legged.")
     elif auth_type == '2':
-        auth = AuthGoogleColab()
+        auth = Auth()
+        print("Authenticating with 3-legged OAuth...")
+        print("Please make sure you added the callback 'http://localhost:8080/api/auth/callback' to your app settings.")
         token = auth.auth3leg()
         TokenConfig.save_config(token)
         click.echo("Token saved to token_config.json. Authentication type: 3-legged.")
@@ -61,7 +63,7 @@ def auth2leg():
 @click.option('--scope', prompt='Scope', default='data:read data:write', help='The scope.')
 def auth3leg(callback, scope):
     """This command authenticates with 3-legged OAuth and copies the token to the clipboard."""
-    auth = AuthGoogleColab()
+    auth = Auth()
     result = auth.auth3leg(callback, scope)
     if not result:
         click.echo("Auth 3 legged failed.")
