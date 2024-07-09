@@ -4,7 +4,7 @@ from .bucket import *
 from .chat import *
 from .revit import *
 from .settings import *
-
+from .webhook import *
 
 @click.group()
 def apsbot():
@@ -46,6 +46,12 @@ apsbot.add_command(data_revit_by_categories)
 apsbot.add_command(data_revit_by_cats_params)
 apsbot.add_command(data_revit_by_family)
 apsbot.add_command(data_revit_by_family_types)
+
+# webhook
+apsbot.add_command(webhooks_get_all)
+apsbot.add_command(webhook_get_by_id)
+apsbot.add_command(webhook_create)
+apsbot.add_command(webhook_delete)
 # chat
 apsbot.add_command(chat)
 apsbot.add_command(chat_data)

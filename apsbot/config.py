@@ -158,6 +158,16 @@ class Config:
         if region is None or region == '':
             return 'US'
         return region
+    
+    @classmethod
+    def load_webhook_id(cls):
+        """Load the webhook ID from a JSON file."""
+        return cls._load_from_config('WEBHOOK_ID')
+    @classmethod
+    def save_webhook_id(cls, webhook_id):
+        """Save the webhook ID to a JSON file."""
+        cls._save_to_config('WEBHOOK_ID', webhook_id)
+    
     @classmethod
     def save_ai_model(cls, ai_model):
         """Save the default AI model to a JSON file."""
