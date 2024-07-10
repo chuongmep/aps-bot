@@ -30,6 +30,7 @@ apsbot.add_command(bucket_upload_object)
 apsbot.add_command(bucket_download_object)
 
 # acc
+apsbot.add_command(parse_url)
 apsbot.add_command(hubs)
 apsbot.add_command(projects)
 apsbot.add_command(top_folders)

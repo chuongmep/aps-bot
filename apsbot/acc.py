@@ -7,6 +7,19 @@ from tabulate import tabulate
 import os
 import pandas as pd
 
+
+@click.command()
+@click.option('--url', prompt='URL', help='The URL to parse.')
+def parse_url(url):
+    """This command parses the URL to see the detail information of the URL."""
+    token = TokenConfig.load_config()
+    bim360 = BIM360(token)
+    result = bim360.parse_url(url) 
+    print("Parse Result:")
+    # dump json
+    print(json.dumps(result, indent=4))
+
+
 @click.command()
 @click.option('--save_data', prompt='Save Data(y/n)', default='n', help='Save data to file.')
 def hubs(save_data):
